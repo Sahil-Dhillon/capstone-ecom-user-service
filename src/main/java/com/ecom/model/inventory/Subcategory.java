@@ -30,7 +30,9 @@ public class Subcategory {
 	@JoinColumn(name = "category_id", nullable = true)
     private Category category;
 	
-	
+	public Subcategory() {
+		
+	}
 	
 	public Subcategory(String name) {
 		super();
@@ -42,6 +44,19 @@ public class Subcategory {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSubcategoryId() {
+		return subcategoryId;
+	}
+
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	

@@ -5,8 +5,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.ecom.model.cart.Cart;
 import com.ecom.model.user.UserAddresses;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -33,6 +37,7 @@ public class Products {
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "categoryId", fetch = FetchType.EAGER)
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "category_id", nullable = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Category category;
 	
 	
@@ -66,7 +71,7 @@ public class Products {
     }
 	
 	public Products( String vendorId, String name, String brand, String description,
-			Category categoryId, Subcategory subCategoryId, List<Specs> listOfSpecs, int price, int quantity,
+			Category category, Subcategory subCategory,List<Specs> listOfSpecs, int price, int quantity,
 			String profileImgUrl, boolean isAvailable) {
 		super();
 		
@@ -74,8 +79,8 @@ public class Products {
 		this.name = name;
 		this.brand = brand;
 		this.description = description;
-		this.category = categoryId;
-		this.subCategory = subCategoryId;
+		this.category = category;
+		this.subCategory = subCategory;
 		this.listOfSpecs = listOfSpecs;
 		this.price = price;
 		this.quantity = quantity;
@@ -108,17 +113,17 @@ public class Products {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Category getCategoryId() {
+	public Category getCategory() {
 		return category;
 	}
-	public void setCategoryId(Category categoryId) {
-		this.category= categoryId;
+	public void setCategory(Category category) {
+		this.category= category;
 	}
-	public Subcategory getSubCategoryId() {
+	public Subcategory getSubCategory() {
 		return subCategory;
 	}
-	public void setSubCategoryId(Subcategory subCategoryId) {
-		this.subCategory = subCategoryId;
+	public void setSubCategory(Subcategory subCategory) {
+		this.subCategory = subCategory;
 	}
 	public List<Specs> getListOfSpecs() {
 		return listOfSpecs;
