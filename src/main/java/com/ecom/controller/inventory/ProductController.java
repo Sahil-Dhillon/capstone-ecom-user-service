@@ -21,7 +21,7 @@ public class ProductController {
     private ProductService service;
 	
 	@PostMapping("/add/{subCategory_id}")
-	public Products add(@PathVariable(value = "subCategory_id") String subCategoryId,@RequestBody Products product) {
+	public Products add(@PathVariable(value = "subCategory_id") Integer subCategoryId,@RequestBody Products product) {
 		
 		return service.addProduct(subCategoryId,product);
 	}
@@ -30,5 +30,28 @@ public class ProductController {
 	public List<Products> listAllProducts(){
 		return service.listAllProducts();
 	}
+	
+	@GetMapping("/{product_id}")
+	public Products listAllProductsByVendorId(@PathVariable(value = "product_id") Integer productId){
+		return service.listAllById(productId);
+	}
+	
+	@GetMapping("/vendorId/{vendor_id}")
+	public List<Products> listAllProductsByVendorId(@PathVariable(value = "vendor_id") String VendorId){
+		return service.listAllByVendorId(VendorId);
+	}
+	
+	
+	@GetMapping("/brand/{brand}")
+	public List<Products> listAllProductsByBrand(@PathVariable(value = "brand") String brand){
+		return service.listAllByBrand(brand);
+	}
+	
+	@GetMapping("/price/{price1}/{price2}")
+	public List<Products> listAllProductsByBrand(@PathVariable(value = "price1") Integer price1,@PathVariable(value = "price2") Integer price2){
+		return service.listAllByPriceBetween(price1, price2);
+	}
+	
+	
 	
 }

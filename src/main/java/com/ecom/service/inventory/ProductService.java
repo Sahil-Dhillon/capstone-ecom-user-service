@@ -22,7 +22,7 @@ public final class ProductService {
 	@Autowired
 	private ICategoryRepo categoryRepository;
 	
-	public Products addProduct(String subCategoryId,Products product) {
+	public Products addProduct(Integer subCategoryId,Products product) {
 		if(product!=null) {
 			
 		    Subcategory subCategory = subcategoryRepository.findById(subCategoryId)
@@ -41,6 +41,18 @@ public final class ProductService {
 		return productRepo.findAll();
 	}
 	
-
+	public List<Products> listAllByVendorId(String vendorId){
+		return productRepo.findByVendorId(vendorId);
+	}
+	public Products listAllById(Integer id){
+		return productRepo.getById(id);
+	}
+	public List<Products> listAllByBrand(String brand){
+		return productRepo.findByBrand(brand);
+	}
+    
+	public List<Products> listAllByPriceBetween(Integer lowerLimit,Integer upperLimit){
+		return productRepo.findByPriceBetween(lowerLimit,upperLimit);
+	}
 	
 }

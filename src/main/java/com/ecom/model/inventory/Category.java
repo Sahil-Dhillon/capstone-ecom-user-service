@@ -15,26 +15,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import lombok.Data;
 
-
+@Data
 @Entity
 public class Category {
 
 	@Id
-	private String categoryId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int categoryId;
 	private String name;
+	private String bannerImage;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.EAGER)
-	private Set<Subcategory> listOfSubcategory;
+//	@OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.EAGER)
+//	private Set<Subcategory> listOfSubcategory;
 	
 	public Category() {
 		
 	}
 	
-	public Category(String name, Set<Subcategory> listOfSubcategory) {
+	public Category(String name, String bannerImage) {
 		super();
 		this.name = name;
-		this.listOfSubcategory = listOfSubcategory;
+		this.bannerImage = bannerImage;
+		//this.listOfSubcategory = listOfSubcategory;
 	}
 	public String getName() {
 		return name;
@@ -42,12 +46,11 @@ public class Category {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Set<Subcategory> getListOfSubcategory() {
-		return listOfSubcategory;
-	}
-	public void setListOfSubcategory(Set<Subcategory> listOfSubcategory) {
-		this.listOfSubcategory = listOfSubcategory;
-	}
+	/*
+	 * public Set<Subcategory> getListOfSubcategory() { return listOfSubcategory; }
+	 * public void setListOfSubcategory(Set<Subcategory> listOfSubcategory) {
+	 * this.listOfSubcategory = listOfSubcategory; }
+	 */
 	
 	
 	

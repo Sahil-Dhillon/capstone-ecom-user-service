@@ -47,19 +47,29 @@ public class UserDetails {
     
     
     
-	public UserDetails(String firstName, String lastName, String email, String password, String mobile, Role role, String profileImg) {
+	public UserDetails() {
 		super();
-    	long timestamp = Instant.now().toEpochMilli();
-    	this.userId= firstName.substring(0, 2).toUpperCase()+String.valueOf(timestamp).substring(String.valueOf(timestamp).length() - 4)+lastName.substring(0, 2).toUpperCase();
+	}
+
+
+	public UserDetails(String firstName, String lastName, String email, String password, String mobile, Role role) {
+		super();
+    	
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
 		this.mobile = mobile;
 		this.role = role;
-		this.profileImg = profileImg;
+		
 	}
-
+	public UserDetails(String email, String password) {
+		super();
+		this.email = email;
+		this.password = password;
+		
+		
+	}
 
 	public String getMobile() {
 		return mobile;

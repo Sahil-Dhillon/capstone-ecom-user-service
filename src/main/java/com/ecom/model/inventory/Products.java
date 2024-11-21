@@ -35,14 +35,14 @@ public class Products {
 	private String description;
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "categoryId", fetch = FetchType.EAGER)
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "category_id", nullable = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Category category;
 	
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "subcategoryId", fetch = FetchType.EAGER)
-	@ManyToOne(fetch = FetchType.LAZY, optional = true)
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "subcategory_id", nullable = true)
 	private Subcategory subCategory;
 	 

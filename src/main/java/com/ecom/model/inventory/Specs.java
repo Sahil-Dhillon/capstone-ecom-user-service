@@ -25,6 +25,9 @@ public class Specs {
 	private int specsId;
 	private String title;
 	private String body;
+	public Specs() {
+		super();
+	}
 	public Specs(String title, String body) {
 		super();
 		this.title = title;

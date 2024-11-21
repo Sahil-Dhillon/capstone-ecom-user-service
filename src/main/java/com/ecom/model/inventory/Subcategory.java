@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.ecom.model.cart.Cart;
 import com.ecom.model.user.UserAddresses;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -23,11 +24,14 @@ import jakarta.persistence.OneToOne;
 public class Subcategory {
 
 	@Id
-	private String subcategoryId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int subcategoryId;
 	private String name;
 	
-	@ManyToOne(fetch = FetchType.LAZY,  optional = true) // You can use EAGER if required
-	@JoinColumn(name = "category_id", nullable = true)
+	@ManyToOne(fetch = FetchType.EAGER,  optional = false) // You can use EAGER if required
+	@JoinColumn(name = "category_id", nullable = false)
+//	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//	@JsonIgnore
     private Category category;
 	
 	public Subcategory() {
@@ -46,7 +50,7 @@ public class Subcategory {
 		this.name = name;
 	}
 
-	public String getSubcategoryId() {
+	public int getSubcategoryId() {
 		return subcategoryId;
 	}
 

@@ -15,7 +15,8 @@ import jakarta.persistence.ManyToOne;
 public class UserAddresses {
 
 	@Id
-	private String addressId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int addressId;
  
 	private String recepientName;
 	private String addressMobile;
@@ -52,11 +53,11 @@ public class UserAddresses {
 		this.label = label;
 	}
 
-	public String getAddressId() {
+	public int getAddressId() {
 		return addressId;
 	}
 
-	public void setAddressId(String addressId) {
+	public void setAddressId(int addressId) {
 		this.addressId = addressId;
 	}
 
