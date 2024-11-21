@@ -27,8 +27,9 @@ public class Category {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.EAGER)
 	private Set<Subcategory> listOfSubcategory;
 	
-	
-	
+	public Category() {
+		
+	}
 	
 	public Category(String name, Set<Subcategory> listOfSubcategory) {
 		super();

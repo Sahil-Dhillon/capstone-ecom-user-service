@@ -22,14 +22,15 @@ public final class ProductService {
 	@Autowired
 	private ICategoryRepo categoryRepository;
 	
-	public Products addProduct(Products product) {
+	public Products addProduct(String subCategoryId,Products product) {
 		if(product!=null) {
-//			Optional<Category> category = categoryRepository.findById(product.getCategoryId())
-//		            .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
-//
-//		    Optional<Subcategory> subcategory = subcategoryRepository.findById(product.getSubCategoryId())
-//		            .orElseThrow(() -> new IllegalArgumentException("Invalid subcategory ID"));
-		productRepo.saveAndFlush(product);
+			
+		    Subcategory subCategory = subcategoryRepository.findById(subCategoryId)
+		            .orElseThrow(() -> new IllegalArgumentException("Invalid subcategory ID"));
+		    
+		    product.setCategory(subCategory.getCategory());
+			product.setSubCategory(subCategory);
+			productRepo.saveAndFlush(product);
 		return product;
 		}
 		System.out.println("Failed to add product");
