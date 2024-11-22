@@ -1,9 +1,15 @@
 package com.ecom.service.inventory;
 
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ecom.dao.inventory.ICategoryRepo;
@@ -37,8 +43,18 @@ public final class ProductService {
 		return null;
 	}
 	
-	public List<Products> listAllProducts(){
-		return productRepo.findAll();
+	public List<Products> listAllProducts(int pageNumber,int pageSize,String sortBy,String sortDir){
+		Sort sort=null;
+		if(sortDir.equalsIgnoreCase("asc")) {
+			sort=Sort.by(sortBy).ascending();
+		}else {
+			sort=Sort.by(sortBy).descending();
+		}
+		Pageable p=(Pageable) PageRequest.of(pageNumber, pageSize,sort);
+		Page<Products> pageContents =productRepo.findAll(p);
+		List<Products> listofContentOnOnePage=pageContents.getContent();
+		return listofContentOnOnePage;
+		
 	}
 	
 	public List<Products> listAllByVendorId(String vendorId){
@@ -53,6 +69,10 @@ public final class ProductService {
     
 	public List<Products> listAllByPriceBetween(Integer lowerLimit,Integer upperLimit){
 		return productRepo.findByPriceBetween(lowerLimit,upperLimit);
+	}
+	
+	public List<Products> searchByTag(String tags){
+		return productRepo.findByTagsContaining(tags);
 	}
 	
 }

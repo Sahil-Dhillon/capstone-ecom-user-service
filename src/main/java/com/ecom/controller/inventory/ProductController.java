@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.model.inventory.Products;
@@ -27,8 +28,13 @@ public class ProductController {
 	}
 	
 	@GetMapping
-	public List<Products> listAllProducts(){
-		return service.listAllProducts();
+	public List<Products> listAllProducts(
+			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
+			@RequestParam(value="pageSize" ,defaultValue="5",required=false)Integer pageSize,
+			@RequestParam(value="sortBy" ,defaultValue="productId",required=false)String sortBy,
+			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+			){
+		return service.listAllProducts(pageNumber,pageSize,sortBy,sortDir);
 	}
 	
 	@GetMapping("/{product_id}")
@@ -52,6 +58,10 @@ public class ProductController {
 		return service.listAllByPriceBetween(price1, price2);
 	}
 	
+	@GetMapping("/{tags}")
+	public List<Products> searchBar(@PathVariable(value = "tags") String tags){
+		return service.searchByTag(tags);
+	}
 	
 	
 }

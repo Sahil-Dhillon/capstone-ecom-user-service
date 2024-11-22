@@ -31,6 +31,7 @@ public class UserDetails {
 	private LocalDate updatedAt;
 	private String profileImg;
 	
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "addressId", fetch = FetchType.EAGER)
 	private Set<UserAddresses> listOfUserAdresses;
 	
@@ -178,6 +179,16 @@ public class UserDetails {
 
 	public void setListOfUserAdresses(Set<UserAddresses> listOfUserAdresses) {
 		this.listOfUserAdresses = listOfUserAdresses;
+	}
+
+
+	public Cart getUserCart() {
+		return userCart;
+	}
+
+
+	public void setUserCart(Cart userCart) {
+		this.userCart = userCart;
 	}
     
     

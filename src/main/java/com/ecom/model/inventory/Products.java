@@ -33,6 +33,8 @@ public class Products {
 	private String name;
 	private String brand;
 	private String description;
+	private String tags;
+	private List<String> variations;
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "categoryId", fetch = FetchType.EAGER)
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
@@ -72,7 +74,7 @@ public class Products {
 	
 	public Products( String vendorId, String name, String brand, String description,
 			Category category, Subcategory subCategory,List<Specs> listOfSpecs, int price, int quantity,
-			String profileImgUrl, boolean isAvailable) {
+			String profileImgUrl, boolean isAvailable,String tags,List<String> variations) {
 		super();
 		
 		this.vendorId = vendorId;
@@ -86,6 +88,9 @@ public class Products {
 		this.quantity = quantity;
 		this.profileImgUrl = profileImgUrl;
 		this.isAvailable = isAvailable;
+		this.tags=tags;
+		this.variations=variations;
+		
 	}
 	
 	
@@ -166,6 +171,22 @@ public class Products {
 	}
 	public void setUpdatedAt(LocalDate updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getTags() {
+		return tags;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public List<String> getVariations() {
+		return variations;
+	}
+
+	public void setVariations(List<String> variations) {
+		this.variations = variations;
 	}
 	
 	
