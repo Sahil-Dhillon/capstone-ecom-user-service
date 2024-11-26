@@ -7,12 +7,15 @@ import java.util.Set;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import com.ecom.model.cart.Cart;
 import com.ecom.model.user.UserAddresses;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +25,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import lombok.Builder.Default;
+
 
 @Entity
 public class Products {
@@ -59,9 +64,35 @@ public class Products {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "imgId", fetch = FetchType.EAGER)
 	private List<ImageGallery> listOfImages;
 	
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public List<Reviews> getListOfReviews() {
+		return listOfReviews;
+	}
+
+	public void setListOfReviews(List<Reviews> listOfReviews) {
+		this.listOfReviews = listOfReviews;
+	}
+
+	public List<ImageGallery> getListOfImages() {
+		return listOfImages;
+	}
+
+	public void setListOfImages(List<ImageGallery> listOfImages) {
+		this.listOfImages = listOfImages;
+	}
+
 	private int price;
 	private int quantity;
 	private String profileImgUrl;
+//	@Value("true")
+	@Column(columnDefinition = "boolean default true")
 	private boolean isAvailable;
 	private LocalDate createdAt;
 	private LocalDate updatedAt;
@@ -154,12 +185,15 @@ public class Products {
 	public void setProfileImgUrl(String profileImgUrl) {
 		this.profileImgUrl = profileImgUrl;
 	}
+	
 	public boolean isAvailable() {
 		return isAvailable;
 	}
+
 	public void setAvailable(boolean isAvailable) {
 		this.isAvailable = isAvailable;
 	}
+
 	public LocalDate getCreatedAt() {
 		return createdAt;
 	}

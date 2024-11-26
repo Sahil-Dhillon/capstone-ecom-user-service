@@ -16,24 +16,7 @@ public class CartService {
 	@Autowired
 	private ICartRepo cartRepository;
 
-	public CartItems createCartItem(int productId, int quantity, String variations) {
-		CartItems cartItem = new CartItems(productId, quantity, variations);
-		return cartItemsRepository.saveAndFlush(cartItem);
 
-	}
-
-	public String deleteCartItem(CartItems cartItem) {
-		cartItemsRepository.delete(cartItem);
-		return "item deleted";
-	}
-	
-	public CartItems updateCartItem(int cartItemId,int quantity) {
-		CartItems cartItem = cartItemsRepository.getById(cartItemId);
-		cartItem.setQuantity(cartItem.getQuantity()+quantity);
-		
-		return cartItemsRepository.saveAndFlush(cartItem);
-
-	}
 	
 	
 

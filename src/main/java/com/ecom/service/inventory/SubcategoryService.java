@@ -31,6 +31,12 @@ public final class SubcategoryService {
 		return subcategoryRepository.saveAndFlush(subcategory);
 	}
 	
+//	public String addMultipleSubcategory(Integer categoryId,List<Subcategory> subcategory) {
+//		for(Subcategory s: subcategory) {
+//			Subcategory sub = addSubcategory(categoryId, subcategory)
+//		}
+//	}
+	
 	public List<Subcategory> listAllSubcategory(){
 		return subcategoryRepository.findAll();
 	}
@@ -38,6 +44,20 @@ public final class SubcategoryService {
 	public Subcategory findBySubcategoryId(Integer id) {
 		return subcategoryRepository.findBySubcategoryId(id);
 	}
+	
+	public Subcategory findByName(String name) {
+		return subcategoryRepository.findByName(name);
+	}
+	
+	public List<Subcategory> findByCategory(Category category) {
+		return subcategoryRepository.findByCategory(category);
+	}
+	
+	public List<Subcategory> findByCategoryName(String name) {
+		Category category = categoryRepository.findByName(name);
+		return findByCategory(category);
+	}
+	
 	
 
 	

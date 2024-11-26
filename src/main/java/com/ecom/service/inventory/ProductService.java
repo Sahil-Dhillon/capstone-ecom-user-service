@@ -60,8 +60,8 @@ public final class ProductService {
 	public List<Products> listAllByVendorId(String vendorId){
 		return productRepo.findByVendorId(vendorId);
 	}
-	public Products listAllById(Integer id){
-		return productRepo.getById(id);
+	public Products listById(Integer id){
+		return productRepo.findByProductId(id);
 	}
 	public List<Products> listAllByBrand(String brand){
 		return productRepo.findByBrand(brand);
@@ -71,8 +71,29 @@ public final class ProductService {
 		return productRepo.findByPriceBetween(lowerLimit,upperLimit);
 	}
 	
-	public List<Products> searchByTag(String tags){
-		return productRepo.findByTagsContaining(tags);
+	
+	public List<Products> listAllProductsBySubcategoryId(int pageNumber,int pageSize,String sortBy,String sortDir,Subcategory subcategory){
+		Sort sort=null;
+		if(sortDir.equalsIgnoreCase("asc")) {
+			sort=Sort.by(sortBy).ascending();
+		}else {
+			sort=Sort.by(sortBy).descending();
+		}
+		Pageable p=(Pageable) PageRequest.of(pageNumber, pageSize,sort);
+		Page<Products> pageContents =productRepo.findBySubCategory(subcategory,p);
+		List<Products> listofContentOnOnePage=pageContents.getContent();
+		return listofContentOnOnePage;
 	}
 	
+	public List<Products> searchByTag(int pageNumber,int pageSize,String sortBy,String sortDir,String tags){
+		Sort sort=null;
+		if(sortDir.equalsIgnoreCase("asc")) {
+			sort=Sort.by(sortBy).ascending();
+		}else {
+			sort=Sort.by(sortBy).descending();
+		}
+		Pageable p=(Pageable) PageRequest.of(pageNumber, pageSize,sort);
+		List<Products> pageContents = productRepo.findByTagsContaining(tags,p);
+		return pageContents;
+	}
 }

@@ -21,6 +21,7 @@ import jakarta.persistence.OneToOne;
 public class ImageGallery {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String imgId;
 	private String imgUrl;
 	

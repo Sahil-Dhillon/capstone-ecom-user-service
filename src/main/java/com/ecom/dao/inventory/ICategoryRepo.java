@@ -7,4 +7,5 @@ import com.ecom.model.inventory.Subcategory;
 
 public interface ICategoryRepo extends JpaRepository<Category, Integer>{
 	public Category findByCategoryId(Integer id);
+	public Category findByName(String name);
 }

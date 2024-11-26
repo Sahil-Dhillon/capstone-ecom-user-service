@@ -25,6 +25,14 @@ public final class CategoryService {
 		return categoryRepository.findByCategoryId(id);
 	}
 	
+	public Category findByCategoryName(String name) {
+		return categoryRepository.findByName(name);
+	}
+	
+	public List<Category> saveAllCategories(List<Category> categories) {
+        return categoryRepository.saveAll(categories);
+    }
+	
 
 	
 }

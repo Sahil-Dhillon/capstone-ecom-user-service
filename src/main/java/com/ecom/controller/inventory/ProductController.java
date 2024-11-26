@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.model.inventory.Products;
+import com.ecom.model.inventory.Subcategory;
 import com.ecom.service.inventory.ProductService;
+import com.ecom.service.inventory.SubcategoryService;
 
 
 @RestController
@@ -21,9 +23,12 @@ public class ProductController {
 	@Autowired
     private ProductService service;
 	
+	@Autowired
+	private SubcategoryService subcategoryservice;
+	
 	@PostMapping("/add/{subCategory_id}")
 	public Products add(@PathVariable(value = "subCategory_id") Integer subCategoryId,@RequestBody Products product) {
-		
+		product.setAvailable(true);
 		return service.addProduct(subCategoryId,product);
 	}
 	
@@ -38,8 +43,8 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{product_id}")
-	public Products listAllProductsByVendorId(@PathVariable(value = "product_id") Integer productId){
-		return service.listAllById(productId);
+	public Products listProductById(@PathVariable(value = "product_id") Integer productId){
+		return service.listById(productId);
 	}
 	
 	@GetMapping("/vendorId/{vendor_id}")
@@ -58,9 +63,25 @@ public class ProductController {
 		return service.listAllByPriceBetween(price1, price2);
 	}
 	
-	@GetMapping("/{tags}")
-	public List<Products> searchBar(@PathVariable(value = "tags") String tags){
-		return service.searchByTag(tags);
+	@GetMapping("/search/{tags}")
+	public List<Products> listAllProductsBySubCategory(@PathVariable(value = "tags") String tags,
+			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
+			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
+			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
+			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+			){
+		return  service.searchByTag(pageNumber,pageSize,sortBy,sortDir,tags);
+	}
+	
+	@GetMapping("/findBySubCategory/{subcategory_id}")
+	public List<Products> listAllProductsBySubCategory(@PathVariable(value = "subcategory_id") Integer subCategoryId,
+			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
+			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
+			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
+			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+			){
+		Subcategory subcategory=subcategoryservice.findBySubcategoryId(subCategoryId);
+		return service.listAllProductsBySubcategoryId(pageNumber,pageSize,sortBy,sortDir,subcategory);
 	}
 	
 	

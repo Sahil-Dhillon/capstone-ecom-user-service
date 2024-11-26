@@ -9,16 +9,18 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ecom.model.inventory.Category;
 import com.ecom.model.inventory.Products;
+import com.ecom.model.inventory.Subcategory;
 
 public interface IProductRepo extends JpaRepository<Products, Integer> {
 
 	List<Products> findByVendorId(String VendorId);
-	List<Products> findByProductId(Integer productId);
+	Products findByProductId(Integer productId);
 	List<Products> findByBrand(String brand);
 	List<Products> findByPriceBetween(Integer lowerLimit, Integer upperLimit);
 	
 	Page<Products> findAll(Pageable p);
-	List<Products> findByTagsContaining(String tags);
+	List<Products> findByTagsContaining(String tags, Pageable p);
+	Page<Products> findBySubCategory(Subcategory subcategory, Pageable p);
 	
 	
 }

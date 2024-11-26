@@ -25,10 +25,14 @@ public class SubcategoryController {
 	
 	@PostMapping("/add/{category_id}")
 	public Subcategory add(@PathVariable(value = "category_id") Integer CategoryId,@RequestBody Subcategory subcategory) {
-		
-			
 		return service.addSubcategory(CategoryId,subcategory);
 	}
+	
+//	@PostMapping("/addMultiple/{category_id}")
+//	public List<Subcategory> addMultiple(@PathVariable(value = "category_id") Integer CategoryId,@RequestBody List<Subcategory> subcategory) {
+//		return service.addMultipleSubcategory(CategoryId,subcategory);
+//	}
+	
 	@GetMapping
 	public List<Subcategory> listAllSubCategory(){
 		return service.listAllSubcategory();
@@ -36,6 +40,21 @@ public class SubcategoryController {
 	@GetMapping("/{subcategory_id}")
 	public Subcategory findById(@PathVariable(value = "subcategory_id") Integer subCategoryId) {
 		return service.findBySubcategoryId(subCategoryId);
+	}
+	
+	@GetMapping("/name/{subcategory_name}")
+	public Subcategory findById(@PathVariable(value = "subcategory_name") String name) {
+		return service.findByName(name);
+	}
+	
+	@GetMapping("/byCategory")
+	public List<Subcategory> findByCategory(@RequestBody Category category) {
+		return service.findByCategory(category);
+	}
+
+	@GetMapping("/byCategoryName/{category_name}")
+	public List<Subcategory> findByCategoryName(@PathVariable(value = "category_name") String categoryName) {
+		return service.findByCategoryName(categoryName);
 	}
 	
 }
