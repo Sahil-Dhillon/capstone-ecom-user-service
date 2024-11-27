@@ -1,6 +1,9 @@
 package com.ecom.dto;
 
 import java.util.List;
+import java.util.Set;
+
+import com.ecom.model.user.UserAddresses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +19,7 @@ public class RegisterUserDto {
     private String lastName;
     private String mobile;
     private String roles;
+    private List<UserAddresses> userAddresses;
     
     
  

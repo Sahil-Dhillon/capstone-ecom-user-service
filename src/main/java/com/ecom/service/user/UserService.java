@@ -15,8 +15,10 @@ import com.ecom.dao.user.IUserRepo;
 import com.ecom.dto.LoginUserDto;
 import com.ecom.dto.RegisterUserDto;
 import com.ecom.model.inventory.Category;
+import com.ecom.model.user.UserAddresses;
 import com.ecom.model.user.UserDetails;
 
+import jakarta.transaction.Transactional;
 
 //@Service
 //public final class UserService {
@@ -89,6 +91,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
     
+    public UserDetails findByUsername(String username) {
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+    }
+    
     public Collection<GrantedAuthority> mapRolesToAuthorities(List<String> roles) {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.toUpperCase()))
                 .collect(Collectors.toList());
@@ -105,7 +112,8 @@ public class UserService {
     	String userId= user.getFirstName().substring(0, 2).toUpperCase()+String.valueOf(timestamp).substring(String.valueOf(timestamp).length() - 4)+user.getLastName().substring(0, 2).toUpperCase();
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setUserId(userId);
-        
+        System.out.println(input.getUserAddresses());
+        user.setListOfUserAdresses(input.getUserAddresses());
         String roles = input.getRoles();
         
         user.setRoles(roles);
@@ -139,5 +147,13 @@ public class UserService {
         userRepository.findAll().forEach(users::add);
         userRepository.findAll().forEach(System.out::println);
         return users;
+    }
+    
+    @Transactional
+    public UserDetails updateUserAddresses(String userName, List<UserAddresses> addresses) {
+    	UserDetails user = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    	user.setListOfUserAdresses(addresses);
+        return userRepository.save(user);
     }
 }

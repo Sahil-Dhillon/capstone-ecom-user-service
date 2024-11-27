@@ -21,6 +21,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
@@ -54,17 +55,12 @@ public class UserDetails implements org.springframework.security.core.userdetail
 	private String profileImg;
 	
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "addressId", fetch = FetchType.EAGER)
-	private Set<UserAddresses> listOfUserAdresses;
+	@OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id") // This maps the relationship
+    private List<UserAddresses> listOfUserAdresses;
 	
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Cart userCart;
-	
-//    public static enum Role {
-//        ADMIN,
-//        VENDOR,
-//        USER;
-//    }
 	
     
     
@@ -222,12 +218,12 @@ public class UserDetails implements org.springframework.security.core.userdetail
 	}
 
 
-	public Set<UserAddresses> getListOfUserAdresses() {
+	public List<UserAddresses> getListOfUserAdresses() {
 		return listOfUserAdresses;
 	}
 
 
-	public void setListOfUserAdresses(Set<UserAddresses> listOfUserAdresses) {
+	public void setListOfUserAdresses(List<UserAddresses> listOfUserAdresses) {
 		this.listOfUserAdresses = listOfUserAdresses;
 	}
 

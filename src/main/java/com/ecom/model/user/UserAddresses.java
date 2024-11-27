@@ -26,20 +26,14 @@ public class UserAddresses {
 	private String pincode;
 	private String state;
 	private String country;
-	private Label label;
+	private String label;  // office, home, other
 	private boolean is_primary;
-	
-    public static enum Label {
-        OFFICE,
-        HOME,
-        OTHER;
-    }
-
     
-    
-    
+	public UserAddresses() {
+		super();
+	}
 	public UserAddresses(String recepientName, String addressMobile, String addressLine1, String addressLine2,
-			String city, String pincode, String state, String country, Label label) {
+			String city, String pincode, String state, String country, String label) {
 		super();
     
 		this.recepientName = recepientName;
@@ -125,11 +119,11 @@ public class UserAddresses {
 		this.country = country;
 	}
 
-	public Label getLabel() {
+	public String getLabel() {
 		return label;
 	}
 
-	public void setLabel(Label label) {
+	public void setLabel(String label) {
 		this.label = label;
 	}
 
