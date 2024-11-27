@@ -2,11 +2,20 @@ package com.ecom.model.user;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.ecom.model.cart.Cart;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,18 +26,31 @@ import jakarta.persistence.OneToOne;
 
 
 @Entity
-public class UserDetails {
+public class UserDetails implements org.springframework.security.core.userdetails.UserDetails{
 
 	@Id
+	@Column(nullable = false)
 	private String userId;
+	@Column(nullable = false)
 	private String firstName;
+	@Column(nullable = true)
 	private String lastName;
+	@Column(unique = true, length = 100, nullable = false)
 	private String email;
+	@Column(nullable = false)
 	private String password;
+	@Column(nullable = true)
 	private String mobile;
-	private Role role;
+	@Column(nullable = true)
+//	@ElementCollection(fetch = FetchType.EAGER)
+    private String roles; // List of roles (e.g., ["ADMIN", "USER"])
+	@CreationTimestamp
+    @Column(updatable = false, name = "created_at")
 	private LocalDate createdAt;
+	@UpdateTimestamp
+    @Column(name = "updated_at")
 	private LocalDate updatedAt;
+	@Column(nullable = true)
 	private String profileImg;
 	
 	
@@ -38,22 +60,21 @@ public class UserDetails {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Cart userCart;
 	
-    public static enum Role {
-        ADMIN,
-        VENDOR,
-        USER;
-    }
-
-
+//    public static enum Role {
+//        ADMIN,
+//        VENDOR,
+//        USER;
+//    }
+	
     
     
     
 	public UserDetails() {
 		super();
+		this.roles = "USER";
 	}
 
-
-	public UserDetails(String firstName, String lastName, String email, String password, String mobile, Role role) {
+	public UserDetails(String firstName, String lastName, String email, String password, String mobile, String roles) {
 		super();
     	
 		this.firstName = firstName;
@@ -61,16 +82,47 @@ public class UserDetails {
 		this.email = email;
 		this.password = password;
 		this.mobile = mobile;
-		this.role = role;
+		this.roles = roles;
 		
 	}
 	public UserDetails(String email, String password) {
 		super();
 		this.email = email;
 		this.password = password;
-		
-		
+				
 	}
+	
+	@Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+	
+	
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 	public String getMobile() {
 		return mobile;
@@ -131,15 +183,13 @@ public class UserDetails {
 		this.password = password;
 	}
 
+	public String getRoles() {
+        return roles;
+    }
 
-	public Role getRole() {
-		return role;
-	}
-
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
 
 
 	public LocalDate getCreatedAt() {

@@ -3,6 +3,7 @@ package com.ecom.controller.inventory;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,8 @@ public class ProductController {
 	@Autowired
 	private SubcategoryService subcategoryservice;
 	
+//	@GetMapping("/admin")
+//    @PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/add/{subCategory_id}")
 	public Products add(@PathVariable(value = "subCategory_id") Integer subCategoryId,@RequestBody Products product) {
 		product.setAvailable(true);
@@ -33,6 +36,7 @@ public class ProductController {
 	}
 	
 	@GetMapping
+//	@PreAuthorize("hasAuthority('ADMIN')")
 	public List<Products> listAllProducts(
 			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
 			@RequestParam(value="pageSize" ,defaultValue="5",required=false)Integer pageSize,
@@ -43,6 +47,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{product_id}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public Products listProductById(@PathVariable(value = "product_id") Integer productId){
 		return service.listById(productId);
 	}
@@ -83,6 +88,4 @@ public class ProductController {
 		Subcategory subcategory=subcategoryservice.findBySubcategoryId(subCategoryId);
 		return service.listAllProductsBySubcategoryId(pageNumber,pageSize,sortBy,sortDir,subcategory);
 	}
-	
-	
 }
