@@ -39,6 +39,8 @@ public class SecurityConfiguration {
                 .requestMatchers("/user/**").hasAnyAuthority("USER","VENDOR","ADMIN")
 //              	.requestMatchers("/products/**").hasAuthority("USER")
                 .requestMatchers("/product/**").permitAll()
+                .requestMatchers("/category/**").permitAll()
+                .requestMatchers("/subcategory/**").permitAll()
                 .requestMatchers("/auth/**")
                 .permitAll()
                 .anyRequest()
