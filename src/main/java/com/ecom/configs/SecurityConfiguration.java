@@ -11,14 +11,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
 @Configuration
+@EnableWebMvc
 @EnableWebSecurity
 public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+    public static final String[] PUBLIC_URLS= {
+    		"/v3/api-docs",
+    		"/v2/api-docs",
+    		"/swagger-resources/**",
+    		"/swagger-ui/**",
+    		"/webjars/**",
+    		
+    };
 
     public SecurityConfiguration(
         JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -33,18 +44,24 @@ public class SecurityConfiguration {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .requestMatchers("/product/add/**").hasAuthority("VENDOR")
+                .requestMatchers(PUBLIC_URLS).permitAll()
+                .requestMatchers("/product/add/**").permitAll()
+                .requestMatchers("/review/add/**").permitAll()
                 .requestMatchers("/product/vendorId/**").permitAll()
                 .requestMatchers("/vendor/**").hasAuthority("VENDOR")
                 .requestMatchers("/user/**").hasAnyAuthority("USER","VENDOR","ADMIN")
 //              	.requestMatchers("/products/**").hasAuthority("USER")
                 .requestMatchers("/product/**").permitAll()
+                .requestMatchers("/product/findBySubCategory/**").permitAll()
                 .requestMatchers("/category/**").permitAll()
                 .requestMatchers("/subcategory/**").permitAll()
+                .requestMatchers("/admin/dashboard/**").permitAll()
+                .requestMatchers("/cartitem/**").permitAll()
+                .requestMatchers("/order/placeorder/**").permitAll()
                 .requestMatchers("/auth/**")
                 .permitAll()
-                .anyRequest()
-                .authenticated()
+//                .anyRequest()
+//                .authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

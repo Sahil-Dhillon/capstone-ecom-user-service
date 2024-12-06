@@ -6,42 +6,38 @@ import java.util.List;
 import com.ecom.model.inventory.Specs;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.Data;
 
+@Entity
+@Data
 public class Payment {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int paymentId;
-	
-	private String orderId;
 	private String paymentMethod;
 	private double totalAmount;
 	private LocalDateTime createdAt;
-	private String status;  
+	private String status;
 
 	public Payment() {
-		
-	}
-	
-	
-	
 
-	public Payment(String orderId, String paymentMethod, double totalAmount, String status) {
+	}
+
+	public Payment(String paymentMethod, double totalAmount, String status) {
 		super();
-		this.orderId = orderId;
+
 		this.paymentMethod = paymentMethod;
 		this.totalAmount = totalAmount;
-		this.createdAt = LocalDateTime.now();;
+		this.createdAt = LocalDateTime.now();
 		this.status = status;
 	}
-
-
-
 
 	public int getPaymentId() {
 		return paymentId;
@@ -49,14 +45,6 @@ public class Payment {
 
 	public void setPaymentId(int paymentId) {
 		this.paymentId = paymentId;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
 	}
 
 	public String getPaymentMethod() {
@@ -90,8 +78,5 @@ public class Payment {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	
-	
-	
+
 }

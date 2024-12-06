@@ -26,9 +26,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Builder.Default;
+import lombok.Data;
 
 
 @Entity
+@Data
 public class Products {
 
 	@Id
@@ -40,6 +42,7 @@ public class Products {
 	private String description;
 	private String tags;
 	private List<String> variations;
+	private double productRating;
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "categoryId", fetch = FetchType.EAGER)
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
@@ -59,8 +62,10 @@ public class Products {
 	private List<Specs> listOfSpecs;
 	
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "reviewId", fetch = FetchType.EAGER)
-	private List<Reviews> listOfReviews;
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="product_id")
+	private List<Review> listOfReviews;
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "imgId", fetch = FetchType.EAGER)
 	private List<ImageGallery> listOfImages;
 	
@@ -72,13 +77,7 @@ public class Products {
 		this.productId = productId;
 	}
 
-	public List<Reviews> getListOfReviews() {
-		return listOfReviews;
-	}
-
-	public void setListOfReviews(List<Reviews> listOfReviews) {
-		this.listOfReviews = listOfReviews;
-	}
+	
 
 	public List<ImageGallery> getListOfImages() {
 		return listOfImages;
@@ -94,6 +93,7 @@ public class Products {
 //	@Value("true")
 	@Column(columnDefinition = "boolean default true")
 	private boolean isAvailable;
+	private String status;
 	private LocalDate createdAt;
 	private LocalDate updatedAt;
 	
@@ -105,7 +105,7 @@ public class Products {
 	
 	public Products( String vendorId, String name, String brand, String description,
 			Category category, Subcategory subCategory,List<Specs> listOfSpecs, int price, int quantity,
-			String profileImgUrl, boolean isAvailable,String tags,List<String> variations) {
+			String profileImgUrl, boolean isAvailable,String tags,List<String> variations,List<ImageGallery> listOfImages) {
 		super();
 		
 		this.vendorId = vendorId;
@@ -121,7 +121,7 @@ public class Products {
 		this.isAvailable = isAvailable;
 		this.tags=tags;
 		this.variations=variations;
-		
+		this.listOfImages = listOfImages;
 	}
 	
 	
@@ -222,10 +222,23 @@ public class Products {
 	public void setVariations(List<String> variations) {
 		this.variations = variations;
 	}
-	
-	
-	
-	
-	
-	
+	public void setProductRating(int productId,int rating) {
+	    if (this.productRating == 0.0) {
+	        this.productRating = 1.0;
+	    }
+
+	    int totalReviews = this.listOfReviews.size();
+
+	    // Compute new product rating
+	    double rawNewRating = ((this.productRating * totalReviews) + rating) / (totalReviews + 1);
+	    double newProductRating = Math.round(rawNewRating * 10) / 10.0;
+	    this.productRating = newProductRating;
+	}
+
 }
+	
+	
+	
+	
+	
+

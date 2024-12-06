@@ -47,7 +47,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{product_id}")
-	@PreAuthorize("hasAuthority('ADMIN')")
+//	@PreAuthorize("hasAuthority('ADMIN')")
 	public Products listProductById(@PathVariable(value = "product_id") Integer productId){
 		return service.listById(productId);
 	}
@@ -64,21 +64,22 @@ public class ProductController {
 	}
 	
 	@GetMapping("/price/{price1}/{price2}")
-	public List<Products> listAllProductsByBrand(@PathVariable(value = "price1") Integer price1,@PathVariable(value = "price2") Integer price2){
+	public List<Products> filterByPrice(@PathVariable(value = "price1") Integer price1,@PathVariable(value = "price2") Integer price2){
 		return service.listAllByPriceBetween(price1, price2);
 	}
 	
-	@GetMapping("/search/{tags}")
+	@GetMapping("/search/{tags}/{subcategoryid}")
 	public List<Products> listAllProductsBySubCategory(@PathVariable(value = "tags") String tags,
 			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
 			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
 			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
-			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir,
+			@PathVariable(value = "sucategoryid") int subcategoryId
 			){
-		return  service.searchByTag(pageNumber,pageSize,sortBy,sortDir,tags);
+		return  service.searchByTagUnderSubcategory(pageNumber, pageSize, sortBy, sortDir, tags,subcategoryId);
 	}
 	
-	@GetMapping("/findBySubCategory/{subcategory_id}")
+	@GetMapping("/bySubCategory/{subcategory_id}")
 	public List<Products> listAllProductsBySubCategory(@PathVariable(value = "subcategory_id") Integer subCategoryId,
 			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
 			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,

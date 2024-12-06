@@ -3,6 +3,7 @@ package com.ecom.service.inventory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,6 +36,7 @@ public final class ProductService {
 		            .orElseThrow(() -> new IllegalArgumentException("Invalid subcategory ID"));
 		    
 		    product.setCategory(subCategory.getCategory());
+		    product.setStatus("pending");
 			product.setSubCategory(subCategory);
 			productRepo.saveAndFlush(product);
 		return product;
@@ -85,6 +87,18 @@ public final class ProductService {
 		return listofContentOnOnePage;
 	}
 	
+	public List<Products> searchByTagUnderSubcategory(int pageNumber,int pageSize,String sortBy,String sortDir,String tags,int subcategoryId){
+		Sort sort=null;
+		if(sortDir.equalsIgnoreCase("asc")) {
+			sort=Sort.by(sortBy).ascending();
+		}else {
+			sort=Sort.by(sortBy).descending();
+		}
+		Pageable p=(Pageable) PageRequest.of(pageNumber, pageSize,sort);
+		List<Products> pageContents = productRepo.findByTagsContaining(tags,p).stream().filter(item->item.getSubCategory().getSubcategoryId()==subcategoryId).collect(Collectors.toList());
+		return pageContents;
+	}
+
 	public List<Products> searchByTag(int pageNumber,int pageSize,String sortBy,String sortDir,String tags){
 		Sort sort=null;
 		if(sortDir.equalsIgnoreCase("asc")) {

@@ -14,6 +14,7 @@ import com.ecom.dao.inventory.ICategoryRepo;
 import com.ecom.dao.user.IUserRepo;
 import com.ecom.dto.LoginUserDto;
 import com.ecom.dto.RegisterUserDto;
+import com.ecom.dto.UpdateUserDto;
 import com.ecom.model.inventory.Category;
 import com.ecom.model.user.UserAddresses;
 import com.ecom.model.user.UserDetails;
@@ -155,5 +156,16 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     	user.setListOfUserAdresses(addresses);
         return userRepository.save(user);
+    }
+    
+    public UserDetails updateUser(String email, UpdateUserDto newUser) {
+    	UserDetails user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    	user.setFirstName(newUser.getFirstName());
+    	user.setLastName(newUser.getLastName());
+    	user.setMobile(newUser.getMobile());
+    	user.setProfileImg(newUser.getProfileImgUrl());
+    	
+    	return userRepository.save(user);
     }
 }

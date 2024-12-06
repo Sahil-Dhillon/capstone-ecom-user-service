@@ -8,6 +8,7 @@ import com.ecom.model.cart.Cart;
 import com.ecom.model.user.UserAddresses;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,33 +22,46 @@ import lombok.NoArgsConstructor;
 
 
 @Entity
-@NoArgsConstructor
 @Data
 @AllArgsConstructor
-public class ImageGallery {
+@NoArgsConstructor
+public class Review {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer imgId;
-	private String imgUrl;
+	private int reviewId;
+	private String review;
+	//@Column(name = "user_id_")
+	private String userId;
+	private int rating;  //out of 5
 	
 	
-	public ImageGallery(String imgUrl) {
+	public Review(String review, String userId, int rating) {
 		super();
-		this.imgUrl = imgUrl;
-	}
-
-
-	public String getImgUrl() {
-		return imgUrl;
-	}
-
-
-	public void setImgUrl(String imgUrl) {
-		this.imgUrl = imgUrl;
+		this.review = review;
+		this.userId = userId;
+		this.rating = rating;
 	}
 	
 	
+	public String getReview() {
+		return review;
+	}
+	public void setReview(String review) {
+		this.review = review;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public int getRating() {
+		return rating;
+	}
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
 	
 	
 	

@@ -17,32 +17,39 @@ import com.ecom.model.user.UserDetails;
 import com.ecom.service.user.UserAddressService;
 import com.ecom.service.user.UserService;
 
-@RequestMapping("/users/addresses")
+@RequestMapping("/users/me/addresses")
 @RestController
 public class UserAddressesController {
-	
+
 	private final UserAddressService addressService;
 
-    public UserAddressesController(UserAddressService addressService) {
-        this.addressService = addressService;
-    }
+	public UserAddressesController(UserAddressService addressService) {
+		this.addressService = addressService;
+	}
 
-    @PutMapping("/{addressId}")
-    public ResponseEntity<UserAddresses> updateAddress(
-            @RequestBody UserAddresses updatedAddressDetails) {
-        UserAddresses updatedAddress = addressService.updateAddress( updatedAddressDetails);
-        return ResponseEntity.ok(updatedAddress);
-    }
-    
-    @GetMapping("/{addressId}")
-    public ResponseEntity<UserAddresses> getAddress(
-            @PathVariable(name = "addressId") Integer addressId) {
-        UserAddresses updatedAddress = addressService.getAddress(addressId);
-        return ResponseEntity.ok(updatedAddress);
-    }
+	@PutMapping("/update")
+	public ResponseEntity<UserDetails> updateAddress(@RequestBody UserAddresses updatedAddressDetails) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserDetails currentUser = (UserDetails) authentication.getPrincipal();
+		UserDetails updatedUser = addressService.updateAddress(updatedAddressDetails, currentUser.getUsername());
+		return ResponseEntity.ok(updatedUser);
+	}
+
+	@PutMapping("/add")
+	public ResponseEntity<UserDetails> addAdress(@RequestBody UserAddresses addressDetails) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserDetails currentUser = (UserDetails) authentication.getPrincipal();
+		UserDetails updatedUser = addressService.addAddress(addressDetails, currentUser.getUsername());
+		return ResponseEntity.ok(updatedUser);
+	}
+
+//    @GetMapping("/{addressId}")
+//    public ResponseEntity<UserAddresses> getAddress(
+//            @PathVariable(name = "addressId") Integer addressId) {
+//        UserAddresses updatedAddress = addressService.getAddress(addressId);
+//        return ResponseEntity.ok(updatedAddress);
+//    }
 //    private final UserAddresses userAddresses;
-
-  
 
 //    @GetMapping("/me")
 //    public ResponseEntity<UserAddresses> authenticatedUser() {
