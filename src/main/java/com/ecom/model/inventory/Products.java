@@ -39,10 +39,12 @@ public class Products {
 	private String vendorId;
 	private String name;
 	private String brand;
+	@Column(length=1000) 
 	private String description;
 	private String tags;
 	private List<String> variations;
 	private double productRating;
+//	private String status;
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "categoryId", fetch = FetchType.EAGER)
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
@@ -55,18 +57,15 @@ public class Products {
 	@ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "subcategory_id", nullable = true)
 	private Subcategory subCategory;
-	 
-
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "specsId", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Specs> listOfSpecs;
-	
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name="product_id")
 	private List<Review> listOfReviews;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "imgId", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<ImageGallery> listOfImages;
 	
 	public int getProductId() {

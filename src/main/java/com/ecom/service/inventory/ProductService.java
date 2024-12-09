@@ -37,7 +37,9 @@ public final class ProductService {
 		    
 		    product.setCategory(subCategory.getCategory());
 		    product.setStatus("pending");
+		    product.setAvailable(false);
 			product.setSubCategory(subCategory);
+			
 			productRepo.saveAndFlush(product);
 		return product;
 		}
