@@ -21,6 +21,7 @@ public interface IProductRepo extends JpaRepository<Products, Integer> {
 	Page<Products> findAll(Pageable p);
 	List<Products> findByTagsContaining(String tags, Pageable p);
 	Page<Products> findBySubCategory(Subcategory subcategory, Pageable p);
+	List<Products> findByStatus(String string);
 	
 	
 }

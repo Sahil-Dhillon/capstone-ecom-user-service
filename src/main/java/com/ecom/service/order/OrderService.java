@@ -32,6 +32,7 @@ public class OrderService {
 	
 	@Autowired
 	private IPaymentRepo paymentRepository; 
+	
 
 	// userId,coupon,orderStatus,totalAmount
 	public OrderDto placeOrder(String userId,String coupon,int addressId,String orderStatus,double totalAmount, List<OrderItem> listOfOrderItems,Payment payment) {
@@ -55,6 +56,8 @@ public class OrderService {
 		user.getOrderList().add(placedOrder);
 		
 		userRepository.saveAndFlush(user);
+		
+		
 		return mapToOrderDTO(placedOrder);
 		//paymentRepository.saveAndFlush(paymentDetail);
 		//return orderRepository.saveAndFlush(placedOrder);

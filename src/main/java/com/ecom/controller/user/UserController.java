@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.dto.UpdateUserDto;
 import com.ecom.model.inventory.Category;
+import com.ecom.model.user.Counter;
 import com.ecom.model.user.UserAddresses;
 import com.ecom.model.user.UserDetails;
 import com.ecom.service.inventory.CategoryService;
@@ -63,7 +64,10 @@ public class UserController {
     }
     
     
-    
+    @GetMapping("/counts")
+    public Counter counts() {
+    	return userService.getCounts();
+    }
 
     @GetMapping("/")
     public ResponseEntity<List<UserDetails>> allUsers() {

@@ -28,6 +28,7 @@ public final class ProductService {
 	private ISubcategoryRepo subcategoryRepository;
 	@Autowired
 	private ICategoryRepo categoryRepository;
+
 	
 	public Products addProduct(Integer subCategoryId,Products product) {
 		if(product!=null) {
@@ -63,6 +64,10 @@ public final class ProductService {
 	
 	public List<Products> listAllByVendorId(String vendorId){
 		return productRepo.findByVendorId(vendorId);
+	}
+
+	public List<Products> listAllAddRequests(){
+		return productRepo.findByStatus("pending");
 	}
 	public Products listById(Integer id){
 		return productRepo.findByProductId(id);
@@ -111,5 +116,17 @@ public final class ProductService {
 		Pageable p=(Pageable) PageRequest.of(pageNumber, pageSize,sort);
 		List<Products> pageContents = productRepo.findByTagsContaining(tags,p);
 		return pageContents;
+	}
+	
+	public Products approveProduct(int productId) {
+		Products product = productRepo.findByProductId(productId);
+		product.setStatus("Accepted");
+		return productRepo.saveAndFlush(product);
+	}
+	
+	public Products rejectProduct(int productId) {
+		Products product = productRepo.findByProductId(productId);
+		product.setStatus("Rejected");
+		return productRepo.saveAndFlush(product);
 	}
 }

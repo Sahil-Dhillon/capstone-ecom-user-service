@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import com.ecom.service.inventory.ProductService;
 import com.ecom.service.inventory.SubcategoryService;
 
 
+
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -27,8 +29,9 @@ public class ProductController {
 	@Autowired
 	private SubcategoryService subcategoryservice;
 	
+	
 //	@GetMapping("/admin")
-//    @PreAuthorize("hasAuthority('ADMIN')")
+//  @PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/add/{subCategory_id}")
 	public Products add(@PathVariable(value = "subCategory_id") Integer subCategoryId,@RequestBody Products product) {
 		product.setAvailable(true);
@@ -57,6 +60,11 @@ public class ProductController {
 		return service.listAllByVendorId(VendorId);
 	}
 	
+	@GetMapping("/requests")
+	public List<Products> listAllProductAddRequests(){
+		return service.listAllAddRequests();
+	}
+	
 	
 	@GetMapping("/brand/{brand}")
 	public List<Products> listAllProductsByBrand(@PathVariable(value = "brand") String brand){
@@ -78,6 +86,16 @@ public class ProductController {
 			){
 		return  service.searchByTagUnderSubcategory(pageNumber, pageSize, sortBy, sortDir, tags,subcategoryId);
 	}
+
+	@GetMapping("/search/{tags}")
+	public List<Products> searchByTags(@PathVariable(value = "tags") String tags,
+			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
+			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
+			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
+			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+			){
+		return  service.searchByTag(pageNumber, pageSize, sortBy, sortDir, tags);
+	}
 	
 	@GetMapping("/bySubCategory/{subcategory_id}")
 	public List<Products> listAllProductsBySubCategory(@PathVariable(value = "subcategory_id") Integer subCategoryId,
@@ -88,5 +106,15 @@ public class ProductController {
 			){
 		Subcategory subcategory=subcategoryservice.findBySubcategoryId(subCategoryId);
 		return service.listAllProductsBySubcategoryId(pageNumber,pageSize,sortBy,sortDir,subcategory);
+	}
+	
+	@PutMapping("approve/{product_id}")
+	public Products approveProduct(@PathVariable(value="product_id") Integer pid) {
+		return service.approveProduct(pid);
+	}
+	
+	@PutMapping("reject/{product_id}")
+	public Products rejectProduct(@PathVariable(value="product_id") Integer pid) {
+		return service.rejectProduct(pid);
 	}
 }

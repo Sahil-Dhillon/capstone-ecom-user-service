@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ecom.dao.inventory.ICategoryRepo;
 import com.ecom.model.inventory.Category;
-import com.ecom.service.user.CounterService;
-
 
 @Service
 public final class CategoryService {
@@ -14,11 +12,7 @@ public final class CategoryService {
 	@Autowired
 	private ICategoryRepo categoryRepository;
 	
-	@Autowired
-	private CounterService counterService;
-	
 	public Category addCategory(Category category) {
-		counterService.incrementCategoryCount();
 		return categoryRepository.saveAndFlush(category);
 		
 	}

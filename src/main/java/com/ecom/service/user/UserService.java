@@ -11,11 +11,14 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ecom.dao.inventory.ICategoryRepo;
+import com.ecom.dao.inventory.IProductRepo;
+import com.ecom.dao.order.IOrderRepo;
 import com.ecom.dao.user.IUserRepo;
 import com.ecom.dto.LoginUserDto;
 import com.ecom.dto.RegisterUserDto;
 import com.ecom.dto.UpdateUserDto;
 import com.ecom.model.inventory.Category;
+import com.ecom.model.user.Counter;
 import com.ecom.model.user.UserAddresses;
 import com.ecom.model.user.UserDetails;
 
@@ -75,21 +78,30 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final IUserRepo userRepository;    
+    private final IProductRepo productRepository;    
+    private final IOrderRepo orderRepository;    
+    private final ICategoryRepo categoryRepository;    
 	
     private final PasswordEncoder passwordEncoder;
     
     private final AuthenticationManager authenticationManager;
     
-    
 
     public UserService(
         IUserRepo userRepository,
         AuthenticationManager authenticationManager,
-        PasswordEncoder passwordEncoder
+        PasswordEncoder passwordEncoder,
+        IProductRepo productRepo,
+        ICategoryRepo categoryRepo,
+        IOrderRepo orderRepo
     ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+		this.categoryRepository = categoryRepo;
+		this.productRepository = productRepo;
+		this.orderRepository = orderRepo;
+		
     }
     
     public UserDetails findByUsername(String username) {
@@ -116,11 +128,8 @@ public class UserService {
         System.out.println(input.getUserAddresses());
         user.setListOfUserAdresses(input.getUserAddresses());
         String roles = input.getRoles();
-        
         user.setRoles(roles);
-        
         System.out.println(input.getRoles());
-        
         
         return userRepository.save(user);
     }
@@ -167,5 +176,14 @@ public class UserService {
     	user.setProfileImg(newUser.getProfileImgUrl());
     	
     	return userRepository.save(user);
+    }
+    
+    public Counter getCounts() {
+    	Counter counter = new Counter();
+    	counter.setCategoryCount(categoryRepository.count());
+    	counter.setOrderCount(orderRepository.count());
+    	counter.setProductCount(productRepository.count());
+    	counter.setUserCount(userRepository.count());
+    	return counter;
     }
 }
