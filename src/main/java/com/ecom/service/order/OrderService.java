@@ -69,12 +69,18 @@ public class OrderService {
         if (!outOfStockMessage.isEmpty()) {
             throw new RuntimeException("Order cannot be placed. Out of stock: " + outOfStockMessage);
         }
+        
+        if( payment.getPaymentMethod().equals("wallet") &&  user.getWalletBalance() < totalAmount) {
+        	throw new RuntimeException("Order cannot be placed. Wallet Balance too low");
+        }
 		
 		user.getOrderList().add(placedOrder);
 		
 		userRepository.saveAndFlush(user);
-		
-		
+		int size=user.getOrderList().size();
+		Order po=user.getOrderList().get(size-1);
+		String recipientEmail =user.getEmail();
+		processOrder(po, recipientEmail);
 		return mapToOrderDTO(placedOrder);
 		//paymentRepository.saveAndFlush(paymentDetail);
 		//return orderRepository.saveAndFlush(placedOrder);
@@ -117,6 +123,7 @@ public class OrderService {
 		user.getOrderList().add(order);
 		
 		userRepository.saveAndFlush(user);
+		
 	    return mapToOrderDTO(order);
 	}
 	
@@ -154,12 +161,19 @@ public class OrderService {
 	    orderDTO.setListOfOrderItems(itemDTOs);
 	    return orderDTO;
 	}
-	public String processOrder(OrderDto orderRequest,String recipientEmail) {
+	public String processOrder(Order orderRequest,String recipientEmail) {
+		Products product=null;
+	    String items = orderRequest.getListOfOrderItems().stream()
+	            .map(item -> "Product: " +productRepository.findById(item.getProductId()).get().getName() +
+	                         ", Price: $" + item.getPrice() +
+	                         ", Variations: " + item.getVariations() +
+	                         ", Quantity: " + item.getQuantity())
+	            .collect(Collectors.joining("\n"));
 		
 		// Create email content for order notification
 		EmailRequest emailRequest = new EmailRequest(recipientEmail,
 				"Dear Customer,\n\nYour order has been successfully placed.\nOrder ID: " + orderRequest.getOrderId() + "\nItems: "
-						+ orderRequest.getListOfOrderItems() + "\n\nThank you for shopping with us!",
+						+ items+ "\n\nThank you for shopping with us!",
 				"Order Confirmation - " + orderRequest.getOrderId());
 
 		// Send email notification

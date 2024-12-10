@@ -48,8 +48,7 @@ public class OrderController {
         UserDetails currentUser = (UserDetails) authentication.getPrincipal();
         UserDetails user = userService.findByUsername(currentUser.getUsername());
         OrderDto orderPlaced = orderService.placeOrder(user.getUserId(), order.getCoupon(),order.getAddressId(), order.getOrderStatus(), order.getTotalAmount(), order.getListOfOrderItems(), order.getPayment());
-        String recipientEmail=user.getEmail();
-        orderService.processOrder(orderPlaced,recipientEmail);
+      
         return ResponseEntity.ok(orderPlaced);
     }
     

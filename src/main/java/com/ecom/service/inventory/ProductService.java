@@ -1,5 +1,6 @@
 package com.ecom.service.inventory;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -186,4 +187,28 @@ public final class ProductService {
 			return null;
 		return productRepo.saveAndFlush(product);
 	}
+    public List<Products> util(int pageNumber, int pageSize, String sortBy, String sortDir, String[] tags) {
+        // Fetch all products with pagination and sorting
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, 
+                sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
+        List<Products> products = productRepo.findAll(pageable).getContent();
+        System.out.println(products);
+        // Filter products by tags iteratively
+        System.out.println("String "+tags);
+        for (String tag : tags) {
+            System.out.println("Processing tag: " + tag);
+
+            products = products.stream()
+                    .filter(product -> {
+                        // Split the product's tags into individual words
+                        String[] productTags = product.getTags() != null ? product.getTags().split(" ") : new String[0];
+                        System.out.println(productTags);
+                        // Check if the current tag exists in the product's tags
+                        return Arrays.asList(productTags).contains(tag);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        return products;
+    }
 }

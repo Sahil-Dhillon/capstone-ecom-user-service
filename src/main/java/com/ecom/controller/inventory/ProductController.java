@@ -2,6 +2,7 @@ package com.ecom.controller.inventory;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,9 @@ import com.ecom.model.inventory.Products;
 import com.ecom.model.inventory.Subcategory;
 import com.ecom.service.inventory.ProductService;
 import com.ecom.service.inventory.SubcategoryService;
+
+import io.jsonwebtoken.lang.Arrays;
+
 
 
 
@@ -87,15 +91,15 @@ public class ProductController {
 		return  service.searchByTagUnderSubcategory(pageNumber, pageSize, sortBy, sortDir, tags,subcategoryId);
 	}
 
-	@GetMapping("/search/{tags}")
-	public List<Products> searchByTags(@PathVariable(value = "tags") String tags,
-			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
-			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
-			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
-			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
-			){
-		return  service.searchByTag(pageNumber, pageSize, sortBy, sortDir, tags);
-	}
+//	@GetMapping("/search/{tags}")
+//	public List<Products> searchByTags(@PathVariable(value = "tags") String tags,
+//			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
+//			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
+//			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
+//			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+//			){
+//		return  service.searchByTag(pageNumber, pageSize, sortBy, sortDir, tags);
+//	}
 	
 	@GetMapping("/bySubCategory/{subcategory_id}")
 	public List<Products> listAllProductsBySubCategory(@PathVariable(value = "subcategory_id") Integer subCategoryId,
@@ -123,4 +127,24 @@ public class ProductController {
 	public Products rejectProduct(@PathVariable(value="product_id") Integer pid,@PathVariable(value="quantity") Integer qty) {
 		return service.editProduct(pid,qty);
 	}
+	
+	
+	@GetMapping("/search/{tags}")
+	public List<Products> listAllProductsByMultipleTags(
+	        @PathVariable(value = "tags") String tags,
+	        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+	        @RequestParam(value = "pageSize", defaultValue = "1", required = false) Integer pageSize,
+	        @RequestParam(value = "sortBy", defaultValue = "price", required = false) String sortBy,
+	        @RequestParam(value = "sort", defaultValue = "asc", required = false) String sortDir
+	        ) {
+         System.out.println("Tags passed" +tags);
+	    // Split tags by a delimiter (e.g., ",")
+	    String[] tagArray = tags.split(",");
+	    System.out.println(java.util.Arrays.toString(tagArray));
+
+	    // Call service method to filter based on multiple tags
+	    return service.util(pageNumber, pageSize, sortBy, sortDir, tagArray);
+	}
+	
+
 }

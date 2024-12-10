@@ -77,6 +77,8 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Wishlist wishlist = new Wishlist();
+	
+	private double walletBalance=2000;
 
 	public UserDetails() {
 		super();
