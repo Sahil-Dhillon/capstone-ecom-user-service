@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import com.ecom.dao.user.IUserRepo;
 import com.ecom.dto.LoginUserDto;
 import com.ecom.dto.RegisterUserDto;
 import com.ecom.dto.UpdateUserDto;
+import com.ecom.dto.notification.EmailClient;
+import com.ecom.dto.notification.EmailRequest;
 import com.ecom.model.inventory.Category;
 import com.ecom.model.user.Counter;
 import com.ecom.model.user.UserAddresses;
@@ -86,6 +89,9 @@ public class UserService {
     
     private final AuthenticationManager authenticationManager;
     
+   @Autowired
+   private EmailClient emailClient;
+    
 
     public UserService(
         IUserRepo userRepository,
@@ -130,6 +136,21 @@ public class UserService {
         String roles = input.getRoles();
         user.setRoles(roles);
         System.out.println(input.getRoles());
+    	user.setEmailVerified(false);
+    	 
+		String verificationToken = UUID.randomUUID().toString();
+ 
+		user.setVerificationToken(verificationToken);
+		System.out.println(verificationToken);
+ 
+		String verificationLink = "http://localhost:8085/users/verify-email?token=" + verificationToken;
+ 
+		emailClient.sendEmail(new EmailRequest(
+				user.getEmail(),
+				"Click the link to verify your email: " + verificationLink,
+				"Verify Your Email Address"
+ 
+		));
         
         return userRepository.save(user);
     }

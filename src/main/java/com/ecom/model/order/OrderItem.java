@@ -15,7 +15,7 @@ public class OrderItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int orderItemId;
-	private String productId;
+	private int productId;
 	private int price;
 	private int quantity;
 	private String variations;
@@ -25,7 +25,7 @@ public class OrderItem {
 
 	}
 
-	public OrderItem(String productId, int price, int quantity, String variations,int vendorId) {
+	public OrderItem(int productId, int price, int quantity, String variations,int vendorId) {
 		super();
 		this.productId = productId;
 		this.price = price;
@@ -42,11 +42,11 @@ public class OrderItem {
 		this.orderItemId = orderItemId;
 	}
 
-	public String getProductId() {
+	public Integer getProductId() {
 		return productId;
 	}
 
-	public void setProductId(String productId) {
+	public void setProductId(int productId) {
 		this.productId = productId;
 	}
 

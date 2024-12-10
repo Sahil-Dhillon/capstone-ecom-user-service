@@ -117,4 +117,10 @@ public class ProductController {
 	public Products rejectProduct(@PathVariable(value="product_id") Integer pid) {
 		return service.rejectProduct(pid);
 	}
+	
+	
+	@PutMapping("edit/{product_id}/{quantity}")
+	public Products rejectProduct(@PathVariable(value="product_id") Integer pid,@PathVariable(value="quantity") Integer qty) {
+		return service.editProduct(pid,qty);
+	}
 }

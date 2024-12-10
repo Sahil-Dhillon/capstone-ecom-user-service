@@ -9,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ecom.dao.cart.IWishlistItemRepo;
+import com.ecom.dao.inventory.IProductRepo;
 import com.ecom.dao.order.IOrderItemRepo;
 import com.ecom.dao.order.IOrderRepo;
 import com.ecom.dao.order.IPaymentRepo;
 import com.ecom.dao.user.IUserRepo;
+import com.ecom.dto.notification.EmailClient;
+import com.ecom.dto.notification.EmailRequest;
 import com.ecom.dto.order.OrderDto;
 import com.ecom.dto.order.OrderItemDto;
 import com.ecom.dto.order.PaymentDto;
 import com.ecom.model.cart.WishlistItem;
+import com.ecom.model.inventory.Products;
 import com.ecom.model.order.Order;
 import com.ecom.model.order.OrderItem;
 import com.ecom.model.order.Payment;
@@ -31,7 +35,13 @@ public class OrderService {
 	private IUserRepo userRepository; 
 	
 	@Autowired
+	private IProductRepo productRepository;
+	
+	@Autowired
 	private IPaymentRepo paymentRepository; 
+	
+	@Autowired
+	private EmailClient emailClient;
 	
 
 	// userId,coupon,orderStatus,totalAmount
@@ -53,6 +63,13 @@ public class OrderService {
 		paymentDetail.setStatus(payment.getStatus());
 		paymentDetail.setTotalAmount(payment.getTotalAmount());
 		placedOrder.setPayment(paymentDetail);
+		
+		// Check stock and update quantities
+        String outOfStockMessage = updateQty(listOfOrderItems);
+        if (!outOfStockMessage.isEmpty()) {
+            throw new RuntimeException("Order cannot be placed. Out of stock: " + outOfStockMessage);
+        }
+		
 		user.getOrderList().add(placedOrder);
 		
 		userRepository.saveAndFlush(user);
@@ -63,6 +80,37 @@ public class OrderService {
 		//return orderRepository.saveAndFlush(placedOrder);
 
 	}
+	
+	private String updateQty(List<OrderItem> orderItems) {
+        StringBuilder outOfStockProducts = new StringBuilder();
+
+        for (OrderItem orderItem : orderItems) {
+            Integer productId = orderItem.getProductId();
+            int orderedQty = orderItem.getQuantity();
+
+            // Fetch product from repository
+            Products product = productRepository.findByProductId(productId);
+            if(product==null) {
+              throw  new RuntimeException("Product not found: " + productId);
+            }
+
+            // Check stock
+            if (product.getQuantity()< orderedQty) {
+                outOfStockProducts.append(product.getName()).append(" (required: ")
+                                  .append(orderedQty).append(", available: ")
+                                  .append(product.getQuantity()).append("), ");
+            } else {
+                // Deduct stock
+                product.setQuantity(product.getQuantity() - orderedQty);
+                productRepository.save(product);
+            }
+        }
+
+        // Return message for out-of-stock products
+        return outOfStockProducts.length() > 0
+                ? outOfStockProducts.substring(0, outOfStockProducts.length() - 2) // Remove trailing ", "
+                : "";
+    }
 	
 	public OrderDto updateOrder(Order order,String userId) {
 		UserDetails user=userRepository.findById(userId).get();
@@ -102,9 +150,20 @@ public class OrderService {
 	        itemDTO.setVendorId(item.getVendorId());
 	        return itemDTO;
 	    }).collect(Collectors.toList());
-
+        
 	    orderDTO.setListOfOrderItems(itemDTOs);
 	    return orderDTO;
+	}
+	public String processOrder(OrderDto orderRequest,String recipientEmail) {
+		
+		// Create email content for order notification
+		EmailRequest emailRequest = new EmailRequest(recipientEmail,
+				"Dear Customer,\n\nYour order has been successfully placed.\nOrder ID: " + orderRequest.getOrderId() + "\nItems: "
+						+ orderRequest.getListOfOrderItems() + "\n\nThank you for shopping with us!",
+				"Order Confirmation - " + orderRequest.getOrderId());
+
+		// Send email notification
+		return emailClient.sendEmail(emailRequest);
 	}
 
 }

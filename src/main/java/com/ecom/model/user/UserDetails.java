@@ -58,6 +58,9 @@ public class UserDetails implements org.springframework.security.core.userdetail
 	@Column(nullable = true)
 	private String profileImg;
 
+	private boolean emailVerified;
+	private String verificationToken;
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id") // This maps the relationship
 	private List<UserAddresses> listOfUserAdresses;
@@ -69,8 +72,8 @@ public class UserDetails implements org.springframework.security.core.userdetail
 	private Cart userCart = new Cart();
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name="user_id")
-	private List<Order> orderList=new ArrayList<>();
+	@JoinColumn(name = "user_id")
+	private List<Order> orderList = new ArrayList<>();
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Wishlist wishlist = new Wishlist();
@@ -224,5 +227,6 @@ public class UserDetails implements org.springframework.security.core.userdetail
 	public void setUserCart(Cart userCart) {
 		this.userCart = userCart;
 	}
+
 
 }

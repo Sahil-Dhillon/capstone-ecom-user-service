@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecom.dao.user.IUserRepo;
 import com.ecom.dto.UpdateUserDto;
 import com.ecom.model.inventory.Category;
 import com.ecom.model.user.Counter;
@@ -33,6 +35,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
     private final UserService userService;
+    
+    @Autowired
+    private IUserRepo userRepo;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -43,7 +48,9 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     
         UserDetails currentUser = (UserDetails) authentication.getPrincipal();
-        UserDetails user = userService.findByUsername(currentUser.getUsername()); 
+        
+        UserDetails user = userService.findByUsername(currentUser.getUsername());
+        
         return ResponseEntity.ok(user);
     }
     
@@ -68,7 +75,26 @@ public class UserController {
     public Counter counts() {
     	return userService.getCounts();
     }
-
+    
+    @GetMapping("/verify-email")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token) {
+        UserDetails user = userRepo.findByVerificationToken(token);
+        if(user==null)
+        	 return ResponseEntity.badRequest().body("Not found User.");
+        if (user.isEmailVerified()) {
+            return ResponseEntity.badRequest().body("Email is already verified.");
+        }
+        System.out.println("Inside verification mail controller"+user);
+        // Mark email as verified
+        if(!user.getVerificationToken().equals(token)) {
+        	user.setEmailVerified(false);
+        	return ResponseEntity.ok("Invalid Token");
+        }
+        user.setEmailVerified(true);
+        user.setVerificationToken(null); // Clear the token
+        userRepo.save(user);
+        return ResponseEntity.ok("Email verified successfully! You can now log in.");
+    }
     @GetMapping("/")
     public ResponseEntity<List<UserDetails>> allUsers() {
         List <UserDetails> users = userService.allUsers();
