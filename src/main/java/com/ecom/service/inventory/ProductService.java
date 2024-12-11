@@ -189,9 +189,9 @@ public final class ProductService {
 	}
     public List<Products> util(int pageNumber, int pageSize, String sortBy, String sortDir, String[] tags) {
         // Fetch all products with pagination and sorting
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, 
-                sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
-        List<Products> products = productRepo.findAll(pageable).getContent();
+       // Pageable pageable = PageRequest.of(pageNumber, pageSize, 
+       //         sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
+        List<Products> products = productRepo.findAll();
         System.out.println(products);
         // Filter products by tags iteratively
         System.out.println("String "+tags);
@@ -202,7 +202,7 @@ public final class ProductService {
                     .filter(product -> {
                         // Split the product's tags into individual words
                         String[] productTags = product.getTags() != null ? product.getTags().split(" ") : new String[0];
-                        System.out.println(productTags);
+                        System.out.println("TAG "+productTags);
                         // Check if the current tag exists in the product's tags
                         return Arrays.asList(productTags).contains(tag);
                     })

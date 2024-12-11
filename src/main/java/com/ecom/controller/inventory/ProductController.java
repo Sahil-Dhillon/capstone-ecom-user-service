@@ -91,15 +91,15 @@ public class ProductController {
 		return  service.searchByTagUnderSubcategory(pageNumber, pageSize, sortBy, sortDir, tags,subcategoryId);
 	}
 
-//	@GetMapping("/search/{tags}")
-//	public List<Products> searchByTags(@PathVariable(value = "tags") String tags,
-//			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
-//			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
-//			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
-//			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
-//			){
-//		return  service.searchByTag(pageNumber, pageSize, sortBy, sortDir, tags);
-//	}
+	@GetMapping("/search/{tags}")
+	public List<Products> searchByTags(@PathVariable(value = "tags") String tags,
+			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
+			@RequestParam(value="pageSize" ,defaultValue="1",required=false)Integer pageSize,
+			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
+			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+			){
+		return  service.searchByTag(pageNumber, pageSize, sortBy, sortDir, tags);
+	}
 	
 	@GetMapping("/bySubCategory/{subcategory_id}")
 	public List<Products> listAllProductsBySubCategory(@PathVariable(value = "subcategory_id") Integer subCategoryId,
@@ -129,7 +129,7 @@ public class ProductController {
 	}
 	
 	
-	@GetMapping("/search/{tags}")
+	@GetMapping("/searchByMultipleTags/{tags}")
 	public List<Products> listAllProductsByMultipleTags(
 	        @PathVariable(value = "tags") String tags,
 	        @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
