@@ -135,6 +135,7 @@ public class UserService {
         user.setListOfUserAdresses(input.getUserAddresses());
         String roles = input.getRoles();
         user.setRoles(roles);
+        user.setProfileImg("https://ecom-imgs.s3.ap-south-1.amazonaws.com/user/user_default.png");
         System.out.println(input.getRoles());
     	user.setEmailVerified(false);
     	if (input.getEmail().endsWith("incedoinc.com")) {

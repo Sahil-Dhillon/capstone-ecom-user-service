@@ -48,8 +48,8 @@ public class OrderService {
 	public OrderDto placeOrder(String userId,String coupon,int addressId,String orderStatus,double totalAmount, List<OrderItem> listOfOrderItems,Payment payment) {
 		UserDetails user=userRepository.findById(userId).get();
 		System.out.println(userId+" is the user Id ");
-		List<Order> orderList=user.getOrderList();
-		System.out.println("Order List is "+orderList);
+//		List<Order> orderList=user.getOrderList();
+//		System.out.println("Order List is "+orderList);
 		Order placedOrder=new Order();
 		placedOrder.setCoupon(coupon);
 		placedOrder.setOrderStatus(orderStatus);
