@@ -3,6 +3,7 @@ package com.ecom.service.inventory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +76,7 @@ public final class ProductService {
 		}
 		Pageable p = (Pageable) PageRequest.of(pageNumber, pageSize, sort);
 		Page<Products> pageContents = productRepo.findAll(p);
-		List<Products> listofContentOnOnePage = pageContents.getContent();
+		List<Products> listofContentOnOnePage = pageContents.getContent().stream().filter(item->item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());;
 		return listofContentOnOnePage;
 
 	}
@@ -93,11 +94,11 @@ public final class ProductService {
 	}
 
 	public List<Products> listAllByBrand(String brand) {
-		return productRepo.findByBrand(brand);
+		return productRepo.findByBrand(brand).stream().filter(item->item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());
 	}
 
 	public List<Products> listAllByPriceBetween(Integer lowerLimit, Integer upperLimit) {
-		return productRepo.findByPriceBetween(lowerLimit, upperLimit);
+		return productRepo.findByPriceBetween(lowerLimit, upperLimit).stream().filter(item->item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());
 	}
 
 	public List<Products> listAllProductsBySubcategoryId(int pageNumber, int pageSize, String sortBy, String sortDir,
@@ -110,7 +111,7 @@ public final class ProductService {
 		}
 		Pageable p = (Pageable) PageRequest.of(pageNumber, pageSize, sort);
 		Page<Products> pageContents = productRepo.findBySubCategory(subcategory, p);
-		List<Products> listofContentOnOnePage = pageContents.getContent();
+		List<Products> listofContentOnOnePage = pageContents.getContent().stream().filter(item->item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());
 		return listofContentOnOnePage;
 	}
 
@@ -124,7 +125,7 @@ public final class ProductService {
 		}
 		Pageable p = (Pageable) PageRequest.of(pageNumber, pageSize, sort);
 		List<Products> pageContents = productRepo.findByTagsContaining(tags, p).stream()
-				.filter(item -> item.getSubCategory().getSubcategoryId() == subcategoryId).collect(Collectors.toList());
+				.filter(item -> item.getSubCategory().getSubcategoryId() == subcategoryId && item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());
 		return pageContents;
 	}
 
@@ -136,21 +137,21 @@ public final class ProductService {
 			sort = Sort.by(sortBy).descending();
 		}
 		Pageable p = (Pageable) PageRequest.of(pageNumber, pageSize, sort);
-		List<Products> pageContents = productRepo.findByTagsContaining(tags, p);
+		List<Products> pageContents = productRepo.findByTagsContaining(tags, p).stream().filter(item->item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());
 		return pageContents;
 	}
 
 	public Products approveProduct(int productId) {
 		Products product = productRepo.findByProductId(productId);
 		product.setStatus("Accepted");
-		notifyBoth(productId,"Accepted");
+		CompletableFuture.runAsync(() -> notifyBoth(productId, "Accepted"));
 		return productRepo.saveAndFlush(product);
 	}
 
 	public Products rejectProduct(int productId) {
 		Products product = productRepo.findByProductId(productId);
 		product.setStatus("Rejected");
-		notifyBoth(productId,"Rejected");
+		CompletableFuture.runAsync(() -> notifyBoth(productId, "Rejected"));
 		return productRepo.saveAndFlush(product);
 	}
 
@@ -158,10 +159,9 @@ public final class ProductService {
 		// Notify Admin about Product Request
 		Products product = productRepo.findByProductId(productId);
 
-	    String adminEmail = userRepository.findAll().stream().filter(item -> item.getRoles().equals("ADMIN"))
-							.findFirst().get().getEmail();
+	    String adminEmail = "ashtapalak@gmail.com";
 		String vendorId = product.getVendorId();
-					String vendorEmail = userRepository.findById(vendorId).get().getEmail(); // Replace with the admin email
+					String vendorEmail = vendorId;
 																								// address
 					String decisionMessage = "The product " + product.getName() + " has been " + status.toUpperCase()
 							+ ".\n\nProduct Details:\n" + product.toString();
@@ -187,28 +187,55 @@ public final class ProductService {
 			return null;
 		return productRepo.saveAndFlush(product);
 	}
+  
     public List<Products> util(int pageNumber, int pageSize, String sortBy, String sortDir, String[] tags) {
-        // Fetch all products with pagination and sorting
-       // Pageable pageable = PageRequest.of(pageNumber, pageSize, 
-       //         sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
-        List<Products> products = productRepo.findAll();
-        System.out.println(products);
-        // Filter products by tags iteratively
-        System.out.println("String "+tags);
-        for (String tag : tags) {
-            System.out.println("Processing tag: " + tag);
-
-            products = products.stream()
-                    .filter(product -> {
-                        // Split the product's tags into individual words
-                        String[] productTags = product.getTags() != null ? product.getTags().split(" ") : new String[0];
-                        System.out.println("TAG "+productTags);
-                        // Check if the current tag exists in the product's tags
-                        return Arrays.asList(productTags).contains(tag);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        return products;
-    }
+		// Fetch all products with pagination and sorting
+		System.out.println("in util");
+		Pageable p = PageRequest.of(pageNumber, pageSize,
+				sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
+		List<Products> products = productRepo.findByTagsContaining(tags[0], p);
+		System.out.println("Fisrt tag " + tags[0]);
+		System.out.println("Inside Util---" + products);
+		// Filter products by tags iteratively
+		System.out.println("String " + tags);
+		for (String tag : tags) {
+			System.out.println("Processing tag: " + tag);
+ 
+			products = products.stream().filter(product -> {
+				// Split the product's tags into individual words
+				String[] productTags = product.getTags() != null ? product.getTags().split(" ") : new String[0];
+				System.out.println("TAG " + productTags);
+				// Check if the current tag exists in the product's tags
+				return Arrays.stream(productTags).anyMatch(productTag -> productTag.contains(tag));
+			}).filter(item->item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());
+		}
+ 
+		return products;
+	}
+ 
+	public List<Products> util2(int pageNumber, int pageSize, String sortBy, String sortDir, String[] tags,Subcategory subcategory) {
+		// Fetch all products with pagination and sorting
+		System.out.println("in util");
+		Pageable p = PageRequest.of(pageNumber, pageSize,
+				sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending());
+		Page<Products> pageContents = productRepo.findBySubCategory(subcategory, p);
+		List<Products> products = pageContents.getContent();
+		System.out.println("Fisrt tag " + tags[0]);
+		System.out.println("Inside Util---" + products);
+		// Filter products by tags iteratively
+		System.out.println("String " + tags);
+		for (String tag : tags) {
+			System.out.println("Processing tag: " + tag);
+ 
+			products = products.stream().filter(product -> {
+				// Split the product's tags into individual words
+				String[] productTags = product.getTags() != null ? product.getTags().split(" ") : new String[0];
+				System.out.println("TAG " + productTags);
+				// Check if the current tag exists in the product's tags
+				return Arrays.asList(productTags).contains(tag);
+			}).filter(item->item.getStatus().equalsIgnoreCase("accepted")).collect(Collectors.toList());
+		}
+ 
+		return products;
+	}
 }

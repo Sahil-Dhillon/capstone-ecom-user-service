@@ -139,12 +139,31 @@ public class ProductController {
 	        ) {
          System.out.println("Tags passed" +tags);
 	    // Split tags by a delimiter (e.g., ",")
-	    String[] tagArray = tags.split(",");
+	    String[] splitTags = tags.split(" ");
+	    String[] tagArray = new String[splitTags.length];
 	    System.out.println(java.util.Arrays.toString(tagArray));
+	    for (int i = 0; i < splitTags.length; i++) {
+	        tagArray[i] = splitTags[i].toLowerCase(); // Convert each tag to lowercase
+	    }
 
 	    // Call service method to filter based on multiple tags
 	    return service.util(pageNumber, pageSize, sortBy, sortDir, tagArray);
 	}
-	
+	@GetMapping("/bySubCategory/{subcategory_id}/tags/{tags}")
+	public List<Products> listAllProductsByMultipleTagsBySubCategory(@PathVariable(value = "subcategory_id") Integer subCategoryId,
+			@PathVariable(value = "tags") String tags,
+			@RequestParam(value="pageNumber" ,defaultValue="0",required=false)Integer pageNumber,
+			@RequestParam(value="pageSize" ,defaultValue="8",required=false)Integer pageSize,
+			@RequestParam(value="sortBy" ,defaultValue="price",required=false)String sortBy,
+			@RequestParam(value="sort" ,defaultValue="asc",required=false)String sortDir
+			){
+		Subcategory subcategory=subcategoryservice.findBySubcategoryId(subCategoryId);
+		String[] splitTags = tags.split(" ");
+		String[] tagArray = new String[splitTags.length];
+	    for (int i = 0; i < splitTags.length; i++) {
+	        tagArray[i] = splitTags[i].toLowerCase(); // Convert each tag to lowercase
+	    }
+		return service.util2(pageNumber,pageSize,sortBy,sortDir,tagArray,subcategory);
+	}
 
 }
