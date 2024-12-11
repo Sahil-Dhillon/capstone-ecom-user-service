@@ -3,6 +3,7 @@ package com.ecom.service.order;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,28 +66,41 @@ public class OrderService {
 		placedOrder.setPayment(paymentDetail);
 		
 
-		if (payment.getPaymentMethod().equals("wallet") && user.getWalletBalance() > totalAmount) {
-			if (!updateQty(listOfOrderItems).isEmpty()) {
-				placedOrder.setOrderStatus("Failed");
-			} else {
-				placedOrder.setOrderStatus("Successful");
-				user.setWalletBalance(user.getWalletBalance() - totalAmount);
+		if (payment.getPaymentMethod().equals("wallet")) {
+			if(user.getWalletBalance() > totalAmount) {
+				System.out.println("Inside wallet check 1");
+				if (!updateQty(listOfOrderItems).isEmpty()) {
+					System.out.println("Inside wallet check1 Failed");
+					placedOrder.setOrderStatus("Invalid Quantities");
+				} else {
+					System.out.println("Inside wallet check 1 Successful");
+					placedOrder.setOrderStatus("Successful");
+					user.setWalletBalance(user.getWalletBalance() - totalAmount);
+				}
+			}else {
+				System.out.println("Inside wallet check1 Failed");
+				placedOrder.setOrderStatus("Insufficient Balance");
 			}
-		} else {
+			
+		} else{
+			System.out.println("Inside other payment check ");
 			if (!updateQty(listOfOrderItems).isEmpty()) {
-				placedOrder.setOrderStatus("Failed");
+				System.out.println("Inside other payment check failed");
+				placedOrder.setOrderStatus("Invalid Quantities");
 			} else {
+				System.out.println("Inside other payment check success");
 				placedOrder.setOrderStatus("Successful");
 			}
 		}
-
 		user.getOrderList().add(placedOrder);
 
 		userRepository.saveAndFlush(user);
 		int size = user.getOrderList().size();
 		Order po = user.getOrderList().get(size - 1);
 		String recipientEmail = user.getEmail();
-		processOrder(po, recipientEmail);
+		CompletableFuture.runAsync(() -> 
+		processOrder(po, recipientEmail)
+		);
 		return mapToOrderDTO(placedOrder);
 		// paymentRepository.saveAndFlush(paymentDetail);
 		// return orderRepository.saveAndFlush(placedOrder);
@@ -130,7 +144,6 @@ public class OrderService {
 				productRepository.save(product);
 			}
 		}
-
 		// Return empty string if stock updates were successful
 		return "";
 	}
