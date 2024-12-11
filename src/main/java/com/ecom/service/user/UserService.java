@@ -137,6 +137,11 @@ public class UserService {
         user.setRoles(roles);
         System.out.println(input.getRoles());
     	user.setEmailVerified(false);
+    	if (input.getEmail().endsWith("incedoinc.com")) {
+            user.setWalletBalance(10000);
+        } else {
+        	user.setWalletBalance(0);
+        }
     	 
 		String verificationToken = UUID.randomUUID().toString();
  

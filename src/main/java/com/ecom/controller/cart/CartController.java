@@ -53,7 +53,9 @@ public class CartController {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails currentUser = (UserDetails) authentication.getPrincipal();
         UserDetails user = userService.findByUsername(currentUser.getUsername()); 
+        System.out.println(user);
         CartItems cartItem = cartService.addItemToCart(productId, quantity, variations, user.getUserId());
+        System.out.println(cartItem);
         return ResponseEntity.ok(cartItem);
     }
     

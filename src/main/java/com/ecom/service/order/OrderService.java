@@ -73,6 +73,9 @@ public class OrderService {
         if( payment.getPaymentMethod().equals("wallet") &&  user.getWalletBalance() < totalAmount) {
         	throw new RuntimeException("Order cannot be placed. Wallet Balance too low");
         }
+        else if(payment.getPaymentMethod().equals("wallet")){
+        	user.setWalletBalance(user.getWalletBalance() - totalAmount);
+        }
 		
 		user.getOrderList().add(placedOrder);
 		

@@ -6,6 +6,7 @@ import com.ecom.model.user.UserAddresses;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,6 +37,7 @@ public class CartItems {
 	private String name;
 	private String brand;
 	private String image;
+	@Column(length = 1000)
 	private String description;
 	private int price;
 	private int quantity;

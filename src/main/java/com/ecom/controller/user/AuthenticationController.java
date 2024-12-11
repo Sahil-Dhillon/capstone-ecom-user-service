@@ -35,20 +35,19 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> authenticate(@RequestBody LoginUserDto loginUserDto) {
+    public Object authenticate(@RequestBody LoginUserDto loginUserDto) {
     	UserDetails user = authenticationService.findByUsername(loginUserDto.getEmail());
 //        UserDetails user = authenticationService.findByUsername(currentUser.getUsername()); 
     	System.out.println(user);
         if(!user.isEmailVerified()) {
         	System.out.println("User not verified");
-        	return ResponseEntity.ok("Please Verify Email");
+        	return ResponseEntity.badRequest();
         }
         UserDetails authenticatedUser = authenticationService.authenticate(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
-
         return ResponseEntity.ok(loginResponse);
     }
 }
