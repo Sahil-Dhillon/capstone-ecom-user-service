@@ -2,6 +2,7 @@ package com.ecom.service.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ecom.configs.PaytmConfig;
 import com.ecom.dao.cart.IWishlistItemRepo;
 import com.ecom.dao.inventory.IProductRepo;
 import com.ecom.dao.order.IOrderItemRepo;
@@ -46,7 +48,8 @@ public class OrderService {
 
 	// userId,coupon,orderStatus,totalAmount
 	public OrderDto placeOrder(String userId, String coupon, int addressId, String orderStatus, double totalAmount,
-			List<OrderItem> listOfOrderItems, Payment payment) {
+			List<OrderItem> listOfOrderItems, Payment payment) throws Exception {
+		
 		UserDetails user = userRepository.findById(userId).get();
 		System.out.println(userId + " is the user Id ");
 		List<Order> orderList = user.getOrderList();
@@ -64,7 +67,7 @@ public class OrderService {
 		paymentDetail.setStatus(payment.getStatus());
 		paymentDetail.setTotalAmount(payment.getTotalAmount());
 		placedOrder.setPayment(paymentDetail);
-		
+		String txnToken = "";
 
 		if (payment.getPaymentMethod().equals("wallet")) {
 			if(user.getWalletBalance() > totalAmount) {
@@ -82,6 +85,17 @@ public class OrderService {
 				placedOrder.setOrderStatus("Insufficient Balance");
 			}
 			
+		}else if(payment.getPaymentMethod().equals("paypal")) {
+			if (!updateQty(listOfOrderItems).isEmpty()) {
+				System.out.println("Inside other payment check failed");
+				placedOrder.setOrderStatus("Invalid Quantities");
+			} else {
+				System.out.println("Inside other payment check success");
+//				Map<String, Object> getTxnToken = PaytmConfig.getTransactionToken(placedOrder.getOrderId(),totalAmount);
+				placedOrder.setOrderStatus("Pending");
+//				System.out.println(getTxnToken.values());
+//				txnToken = (String) getTxnToken.get("txnToken");
+			}
 		} else{
 			System.out.println("Inside other payment check ");
 			if (!updateQty(listOfOrderItems).isEmpty()) {
@@ -101,7 +115,7 @@ public class OrderService {
 		CompletableFuture.runAsync(() -> 
 		processOrder(po, recipientEmail)
 		);
-		return mapToOrderDTO(placedOrder);
+		return mapToOrderDTO(placedOrder,txnToken);
 		// paymentRepository.saveAndFlush(paymentDetail);
 		// return orderRepository.saveAndFlush(placedOrder);
 
@@ -154,12 +168,13 @@ public class OrderService {
 
 		userRepository.saveAndFlush(user);
 
-		return mapToOrderDTO(order);
+		return mapToOrderDTO(order,"");
 	}
 
-	public OrderDto mapToOrderDTO(Order order) {
+	public OrderDto mapToOrderDTO(Order order,String txnToken) {
 		OrderDto orderDTO = new OrderDto();
 		orderDTO.setOrderId(order.getOrderId());
+		orderDTO.setTxnToken(txnToken);
 		orderDTO.setOrderStatus(order.getOrderStatus());
 		orderDTO.setTotalAmount(order.getTotalAmount());
 		orderDTO.setCreatedAt(order.getCreatedAt());

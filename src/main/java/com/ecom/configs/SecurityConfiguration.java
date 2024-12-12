@@ -57,6 +57,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/subcategory/**").permitAll()
                 .requestMatchers("/admin/dashboard/**").permitAll()
                 .requestMatchers("/cartitem/**").permitAll()
+                .requestMatchers("/faq/**").permitAll()
                 .requestMatchers("/order/placeorder/**").permitAll()
                 .requestMatchers("/user/verify-email/**").permitAll()
                 .requestMatchers("/auth/**")

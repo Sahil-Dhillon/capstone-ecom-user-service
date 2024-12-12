@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderDto {
 	private int orderId;
+	private String txnToken;
 	private String orderStatus;
 	private double totalAmount;
 	private LocalDateTime createdAt;

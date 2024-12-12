@@ -1,8 +1,11 @@
 package com.ecom.controller.order;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +28,10 @@ import com.ecom.model.user.UserDetails;
 import com.ecom.service.cart.CartItemService;
 import com.ecom.service.order.OrderService;
 import com.ecom.service.user.UserService;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 
 @RestController
 @RequestMapping("/order")
@@ -43,7 +50,7 @@ public class OrderController {
 	
     @PostMapping("/placeorder")
     public ResponseEntity<OrderDto> addItemToCart(
-            @RequestBody Order order) {
+            @RequestBody Order order) throws Exception {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); 
         UserDetails currentUser = (UserDetails) authentication.getPrincipal();
         UserDetails user = userService.findByUsername(currentUser.getUsername());
@@ -60,6 +67,7 @@ public class OrderController {
         OrderDto orderUpdated = orderService.updateOrder(order,userId);
         return ResponseEntity.ok(orderUpdated);
     }
-
+    
+    
    
 }

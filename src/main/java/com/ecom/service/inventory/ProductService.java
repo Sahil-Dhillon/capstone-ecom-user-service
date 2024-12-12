@@ -163,8 +163,7 @@ public final class ProductService {
 		String vendorId = product.getVendorId();
 					String vendorEmail = vendorId;
 																								// address
-					String decisionMessage = "The product " + product.getName() + " has been " + status.toUpperCase()
-							+ ".\n\nProduct Details:\n" + product.toString();
+					String decisionMessage = "The product " + product.getName() + " has been " + status.toUpperCase()+".";
 		// Notify Vendor
 		EmailRequest vendorEmailRequest = new EmailRequest(vendorEmail, decisionMessage,
 		"Product Request " + status.toUpperCase());
@@ -179,13 +178,14 @@ public final class ProductService {
 
 	public Products editProduct(int productId,  int quantity) {
 		Products product = productRepo.findByProductId(productId);
-		if (product.getStatus().equals("pending")) {
-		return product;
-		} else if (product.getStatus().equals("accepted"))
+		if (product.getStatus().equals("Accepted")) {
 			product.setQuantity(quantity);
-		else if (product.getStatus().equals("denied"))
+			return productRepo.saveAndFlush(product);
+		} else if (product.getStatus().equals("pending"))
 			return null;
-		return productRepo.saveAndFlush(product);
+		else
+			return null;
+//		return productRepo.saveAndFlush(product);
 	}
   
     public List<Products> util(int pageNumber, int pageSize, String sortBy, String sortDir, String[] tags) {
